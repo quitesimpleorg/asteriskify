@@ -23,6 +23,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <stdint.h>
+#include <sys/prctl.h>
 
 #define PWBUF_SIZE 256
 
@@ -154,6 +155,12 @@ int main()
 	if(atexit(exit_handler) != 0)
 	{
 		fprintf(stderr, "Failed to register exit handler\n");
+		exit(EXIT_FAILURE);
+	}
+
+	if(prctl(PR_SET_DUMPABLE, 0) != 0)
+	{
+		fprintf(stderr, "Failed to make process not dumpable\n");
 		exit(EXIT_FAILURE);
 	}
 
