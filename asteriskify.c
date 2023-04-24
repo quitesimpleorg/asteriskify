@@ -36,7 +36,8 @@ size_t pwbufsize  = 0;
 size_t pwindex = 0;
 int current_mode = MODE_ECHO;
 
-void enter_raw_mode() {
+void enter_raw_mode()
+{
 	struct termios raw = saved_termios;
 	raw.c_lflag &= ~(ECHO | ICANON);
 	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) != 0)
@@ -121,28 +122,28 @@ void clear_term_line()
 
 void print_password()
 {
-		clear_term_line();
-		char *prompt = "Password: ";
-		write(STDERR_FILENO, prompt, strlen(prompt));
-		if(current_mode == MODE_ECHO)
+	clear_term_line();
+	char *prompt = "Password: ";
+	write(STDERR_FILENO, prompt, strlen(prompt));
+	if(current_mode == MODE_ECHO)
+	{
+		write(STDERR_FILENO, pwbuf, pwindex);
+	}
+	if(current_mode == MODE_STARS)
+	{
+		for(size_t i = 0; i < pwindex; i++)
 		{
-			write(STDERR_FILENO, pwbuf, pwindex);
-		}
-		if(current_mode == MODE_STARS)
-		{
-			for(size_t i = 0; i < pwindex; i++)
+			uint8_t n = pwbuf[i];
+			/* Skip utf-8 byte 2-4, we won't print an asterisk for those*/
+			if((n >>6) == 0b10)
 			{
-				uint8_t n = pwbuf[i];
-				/* Skip utf-8 byte 2-4, we won't print an asterisk for those*/
-				if((n >>6) == 0b10)
-				{
-					continue;
-				}
-				char mask = '*';
-				write(STDERR_FILENO, &mask, 1);
+				continue;
 			}
+			char mask = '*';
+			write(STDERR_FILENO, &mask, 1);
 		}
-		fsync(STDERR_FILENO);
+	}
+	fsync(STDERR_FILENO);
 }
 
 void switch_mode()
