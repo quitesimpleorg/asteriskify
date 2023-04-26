@@ -12,5 +12,5 @@ To switch between clear and asterisk mode, press TAB. To reveal only the last ch
 Note: Expects ASCII or UTF-8 encoding for asterisk mode
 
 ## Alternatives
-Others may exist, but my quick research only found systemd-ask-password which is unsuitable for my use case (inside a my own minimal initramfs boot image). 
+Others may exist, but my quick research only found systemd-ask-password which is unsuitable for my use case (inside a my own minimal initramfs boot image).
 
